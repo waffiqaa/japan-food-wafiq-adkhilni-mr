@@ -624,17 +624,6 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    int crossAxisCount = 2;
-
-    if (width >= 1200) {
-      crossAxisCount = 4;
-    } else if (width >= 850) {
-      crossAxisCount = 3;
-    } else if (width < 390) {
-      crossAxisCount = 1;
-    }
-
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
@@ -647,11 +636,14 @@ class HomeContent extends StatelessWidget {
                 const SizedBox(height: 18),
                 PromoCard(totalItem: totalItem),
                 const SizedBox(height: 18),
+
                 CategorySelector(
                   selectedCategory: selectedCategory,
                   onChanged: onCategoryChanged,
                 ),
-                const SizedBox(height: 8),
+
+                const SizedBox(height: 12),
+
                 const Text(
                   'Menu Pilihan',
                   style: TextStyle(
@@ -660,7 +652,9 @@ class HomeContent extends StatelessWidget {
                     fontWeight: FontWeight.w900,
                   ),
                 ),
+
                 const SizedBox(height: 4),
+
                 const Text(
                   'Pilih makanan, snack, atau minuman khas Jepang favorit anda.',
                   style: TextStyle(
@@ -672,27 +666,113 @@ class HomeContent extends StatelessWidget {
             ),
           ),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(18, 12, 18, 90),
-          sliver: SliverGrid(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final item = menus[index];
 
-                return MenuCard(
-                  item: item,
-                  onAdd: () => onAddToCart(item),
-                  onDetail: () => onOpenDetail(item),
-                );
-              },
-              childCount: menus.length,
-            ),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 14,
-              mainAxisSpacing: 14,
-              childAspectRatio: crossAxisCount == 1 ? 1.7 : 0.78,
-            ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final item = menus[index];
+
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  18,
+                  0,
+                  18,
+                  14,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: AppColors.sakura,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: AppColors.card,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.asset(
+                            item.image,
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (context, error, stackTrace) {
+                              return Center(
+                                child: Text(
+                                  item.icon,
+                                  style: const TextStyle(
+                                    fontSize: 35,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.name,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+
+                            const SizedBox(height: 4),
+
+                            Text(
+                              item.description,
+                              maxLines: 2,
+                              overflow:
+                                  TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.muted,
+                                fontSize: 12,
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            Text(
+                              rupiah(item.price),
+                              style: const TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      FilledButton(
+                        onPressed: () => onAddToCart(item),
+                        style: FilledButton.styleFrom(
+                          backgroundColor:
+                              AppColors.primary,
+                        ),
+                        child: const Text('ADD'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+            childCount: menus.length,
           ),
         ),
       ],
